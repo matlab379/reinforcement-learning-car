@@ -4,3 +4,4 @@ __pycache__
 *.xlsx
 *.h5
 .idea/
+results/
