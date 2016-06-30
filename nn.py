@@ -18,7 +18,7 @@ class LossHistory(Callback):
         self.losses.append(logs.get('loss'))
 
 
-def neural_net(num_sensors, params, load=''):
+def neural_net(num_sensors, num_output, params, load=''):
     model = Sequential()
 
     # First layer.
@@ -32,9 +32,14 @@ def neural_net(num_sensors, params, load=''):
     model.add(Dense(params[1], init='lecun_uniform'))
     model.add(Activation('relu'))
     model.add(Dropout(0.2))
+    
+    # Third layer.
+    model.add(Dense(params[2], init='lecun_uniform'))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.2))
 
     # Output layer.
-    model.add(Dense(3, init='lecun_uniform'))
+    model.add(Dense(num_output, init='lecun_uniform'))
     model.add(Activation('linear'))
 
     rms = RMSprop()
@@ -54,7 +59,7 @@ def lstm_net(num_sensors, load=False):
     model.add(Dropout(0.2))
     model.add(LSTM(output_dim=512, input_dim=512, return_sequences=False))
     model.add(Dropout(0.2))
-    model.add(Dense(output_dim=3, input_dim=512))
+    model.add(Dense(output_dim=NUM_OUTPUT, input_dim=512))
     model.add(Activation("linear"))
     model.compile(loss="mean_squared_error", optimizer="rmsprop")
 
