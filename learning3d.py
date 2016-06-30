@@ -7,7 +7,7 @@ from vpython import *
 import os.path
 import timeit
 
-NUM_INPUT = 58 # 57 + 1
+NUM_INPUT = 42 # 41 + 1
 GAMMA = 0.9  # Forgetting.
 TUNING = False  # If False, just use arbitrary, pre-selected params.
 
@@ -32,7 +32,7 @@ def train_net(model, params):
     loss_log = []
 
     # Create a new game instance.
-    game_state = Car3d.GameState(vector(0.3,0.4,0.66))
+    game_state = Car3d.GameState(vector(0.3,0.4,0.36))
 
     # Get initial state by doing nothing and getting the state.
     _, state = game_state.frame_step((np.random.randint(0,6)))
@@ -90,20 +90,22 @@ def train_net(model, params):
 
         # We died, so update stuff.
         if reward == -500:
+            car_distance = 0
+        if reward == 2000:
             # Log the car's distance at this T.
             data_collect.append([t, car_distance])
 
             # Update max.
-            if car_distance > max_car_distance:
-                max_car_distance = car_distance
+            if car_distance < min_car_distance:
+                min_car_distance = car_distance
 
             # Time it.
             tot_time = timeit.default_timer() - start_time
             fps = car_distance / tot_time
 
             # Output some stuff so we can watch.
-            #print("Max: %d at %d\tepsilon %f\t(%d)\t%f fps" %
-            #      (max_car_distance, t, epsilon, car_distance, fps))
+            print("Max: %d at %d\tepsilon %f\t(%d)\t%f fps" %
+                  (min_car_distance, t, epsilon, car_distance, fps))
 
             # Reset.
             car_distance = 0
@@ -208,7 +210,7 @@ if __name__ == "__main__":
             launch_learn(param_set)
 
     else:
-        nn_param = [164, 150, 130]
+        nn_param = [264, 250, 230]
         params = {
             "batchSize": 100,
             "buffer": 50000,

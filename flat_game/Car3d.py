@@ -9,18 +9,18 @@ from vpython import *
 
 class GameState():
     def __init__(self, target):
-        self.scene = display(title='Examples of Tetrahedrons', x=0, y=0, width=600, height=600,                              center=vector(0,0,0), background=vector(1,1,1))
+        self.scene = display(title='Examples of Tetrahedrons', x=0, y=0, width=600, height=600,                    center=vector(0,0,0), background=vector(1,1,1))
         self.target = target
-        Nobstale = 10  # change this to have more or fewer atoms
+        Nobstale = 4  # change this to have more or fewer atoms
         # Typical values
         L = 1 # container is a cube L on a side
         gray = color.gray(0.7) # color of edges of container
         mass = 4E-3/6E23 # helium mass
         self.r_car = 0.027 # wildly exaggerated size of helium atom
-        self.r_obstale = 0.1
+        self.r_obstale = 0.2
         self.r_sensor =  0.0045
-        
-        self.dt = 0.8
+        self.initial_pos = vector(-0.25,-0.22,-0.24)
+        self.dt = 1
         #the limitation of space
         d = L/2 + self.r_obstale
         r = 0.005
@@ -37,9 +37,10 @@ class GameState():
         vert3.append([vector(d,-d,d), vector(d,d,d)])
         vert4.append([vector(d,-d,-d), vector(d,d,-d)])
         #define the car and the obstales
-        self.car = sphere (pos=vector(0-0.35,-0.32,-0.24), color = color.green, radius = self.r_car, make_trail=True, retain=20)
+        self.car = sphere (pos=self.initial_pos, color = color.green, radius = self.r_car, make_trail=True, retain=20)
+        self.target_ball = sphere (pos= self.target, color = color.blue, radius = self.r_car, make_trail=False)
         #self.car.v = vector (-0.02, -0.035, +0.075)
-        self.car.v = vector (0, 0, 0)
+        self.car.v = vector(0, 0, 0)
         self.obstales = []
         self.sensor_arms = []
         self.opos = []
@@ -60,66 +61,66 @@ class GameState():
         self.edge = False
     def frame_step(self, action):
         if action == 0:
-            self.car.v.x += 0.001
+            self.car.v.x += 0.004
         elif action == 1:
-            self.car.v.y += 0.001
+            self.car.v.y += 0.004
         elif action == 2:
-            self.car.v.z += 0.001
+            self.car.v.z += 0.004
         elif action == 3:
-            self.car.v.y -= 0.001
+            self.car.v.x -= 0.004
         elif action == 4:
-            self.car.v.z -= 0.001
+            self.car.v.y -= 0.004
         elif action == 5:
-            self.car.v.y -= 0.001
-        elif action == 6:
-            self.car.v = vector(0,0,0)
+            self.car.v.z -= 0.004
+        
     #while True:
         rate(200)
+        self.car.v = norm(self.car.v)/50
 
         self.car.pos = self.car.pos + self.car.v*self.dt
 
         if not self.initialed:
-            for i in range(0,8):
+            for i in range(0,6):
                 sonar_arm = self.make_sonar_arm(self.car.pos,self.r_car, 0)
                 for sensor in sonar_arm:
-                    sen = sensor.rotate(origin=self.car.pos, axis=vector(0,1,0), angle=i*pi/4)
+                    sen = sensor.rotate(origin=self.car.pos, axis=vector(0,1,0), angle=i*2*pi/3)
 
                 self.sensor_arms.append(sonar_arm)
-            for i in range(1,8):
+            for i in range(1,6):
                 sonar_arm = self.make_sonar_arm(self.car.pos,self.r_car, 0)
                 for sensor in sonar_arm:
-                    sen = sensor.rotate(origin=self.car.pos, axis=vector(0,0,1), angle=i*pi/4)
+                    sen = sensor.rotate(origin=self.car.pos, axis=vector(0,0,1), angle=i*2*pi/3)
 
                 self.sensor_arms.append(sonar_arm)
-            for i in range(1,8):
+            for i in range(1,6):
                 sonar_arm = self.make_sonar_arm(self.car.pos,self.r_car, 0)
                 for sensor in sonar_arm:
-                    sen = sensor.rotate(origin=self.car.pos, axis=vector(0,1,1), angle=i*pi/4)
+                    sen = sensor.rotate(origin=self.car.pos, axis=vector(0,1,1), angle=i*2*pi/3)
                 self.sensor_arms.append(sonar_arm)
-            for i in range(1,8):
+            for i in range(1,6):
                 sonar_arm = self.make_sonar_arm(self.car.pos,self.r_car, 0)
                 for sensor in sonar_arm:
-                    sen = sensor.rotate(origin=self.car.pos, axis=vector(0,1,-1), angle=i*pi/4)
+                    sen = sensor.rotate(origin=self.car.pos, axis=vector(0,1,-1), angle=i*2*pi/3)
                 self.sensor_arms.append(sonar_arm)
-            for i in range(1,8):
+            for i in range(1,6):
                 sonar_arm = self.make_sonar_arm(self.car.pos,self.r_car, 1)
                 for sensor in sonar_arm:
-                    sen = sensor.rotate(origin=self.car.pos, axis=vector(1,0,1), angle=i*pi/4)
+                    sen = sensor.rotate(origin=self.car.pos, axis=vector(1,0,1), angle=i*2*pi/3)
                 self.sensor_arms.append(sonar_arm)
-            for i in range(1,8):
+            for i in range(1,6):
                 sonar_arm = self.make_sonar_arm(self.car.pos,self.r_car, 1)
                 for sensor in sonar_arm:
-                    sen = sensor.rotate(origin=self.car.pos, axis=vector(-1,0,1), angle=i*pi/4)
+                    sen = sensor.rotate(origin=self.car.pos, axis=vector(-1,0,1), angle=i*2*pi/3)
                 self.sensor_arms.append(sonar_arm)
-            for i in range(1,8):
+            for i in range(1,6):
                 sonar_arm = self.make_sonar_arm(self.car.pos,self.r_car, 2)
                 for sensor in sonar_arm:
-                    sen = sensor.rotate(origin=self.car.pos, axis=vector(1,1,0), angle=i*pi/4)
+                    sen = sensor.rotate(origin=self.car.pos, axis=vector(1,1,0), angle=i*2*pi/3)
                 self.sensor_arms.append(sonar_arm)
-            for i in range(1,8):
+            for i in range(1,6):
                 sonar_arm = self.make_sonar_arm(self.car.pos,self.r_car, 2)
                 for sensor in sonar_arm:
-                    sen = sensor.rotate(origin=self.car.pos, axis=vector(-1,1,0), angle=i*pi/4)
+                    sen = sensor.rotate(origin=self.car.pos, axis=vector(-1,1,0), angle=i*2*pi/3)
                 self.sensor_arms.append(sonar_arm)
 
             self.initialed = True 
@@ -136,14 +137,24 @@ class GameState():
         if self.car_is_crashed(readings):
             self.crashed = True
             self.car.color = color.red
-            reward = -500
+            reward = -600
             self.recover_from_crash(self.car.v)
-        elif distance < 0.0001:
+        elif distance < 0.006:
             self.car.color = color.yellow
             print("get target")
-            reward = 2000
+            reward = 5000
+            self.car.pos = self.initial_pos
+            self.car.v = vector(0,0,0)
+            self.initialed = False
+            for sensor_arm in self.sensor_arms:
+                for sensor in sensor_arm:
+                    sensor.visible = False
+                    sensor.delete()
+                del sensor_arm
+            self.sensor_arms = [] 
         else:
-            reward = -5 + int(self.sum_readins(readings) / 10)
+            reward = -100 + int(self.sum_readins(readings) / 20) + 100/distance
+            
         return reward, state  
 
     def sum_readins(self,readings):
@@ -155,21 +166,37 @@ class GameState():
         
         if self.crashed:
             
-            if self.edge:
-                if not (self.side > self.car.pos.x > -self.side):
-                    self.car.v.x = -self.car.v.x
-                elif not (self.side > self.car.pos.y > -self.side):
-                    self.car.v.y = -self.car.v.y
-                elif not (self.side > self.car.pos.z > -self.side):
-                    self.car.v.z = -self.car.v.z
-                if mag(self.car.pos) > 1.12:
-                    self.car.pos = vector(-0.25,-0.22,-0.24)
-                    #self.car.color = color.green
-            elif self.collision:
-                self.car.v = - self.car.v
-            self.car.pos = self.car.pos + self.car.v*self.dt
-            self.update_sonar_arm(self.sensor_arms, self.car.v)
-            self.edge = False
+#            if self.edge:
+#                if not (self.side > self.car.pos.x > -self.side):
+#                    self.car.v.x = -self.car.v.x
+#                elif not (self.side > self.car.pos.y > -self.side):
+#                    self.car.v.y = -self.car.v.y
+#                elif not (self.side > self.car.pos.z > -self.side):
+#                    self.car.v.z = -self.car.v.z
+#                if mag(self.car.pos) > 1.12:
+#                    self.car.pos = self.initial_pos
+#                    self.car.v = vector(0,0,0)
+#                    self.initialed = False
+#                    for sensor_arm in self.sensor_arms:
+#                        for sensor in sensor_arm:
+#                            sensor.visible = False
+#                            del sensor
+#                    self.sensor_arms = []        
+#                    #self.car.color = color.green
+#            elif self.collision:
+#                self.car.v = - self.car.v
+#            self.car.pos = self.car.pos + self.car.v*self.dt
+#            self.update_sonar_arm(self.sensor_arms, self.car.v)
+#            self.edge = False
+            self.car.pos = self.initial_pos
+            self.car.v = vector(0,0,0)
+            self.initialed = False
+            for sensor_arm in self.sensor_arms:
+                for sensor in sensor_arm:
+                    sensor.visible = False
+                    sensor.delete()
+                del sensor_arm
+            self.sensor_arms = []        
             self.collision = False
             self.crashed = False
             
@@ -248,13 +275,13 @@ class GameState():
         # center later.
         if condition == 0:
             
-            for i in range(0, 10):
+            for i in range(0, 30):
                 arm_points.append(vector(r_car + pos.x + (interval * i), pos.y, pos.z))
         elif condition == 1:
-            for i in range(0, 10):
+            for i in range(0, 30):
                 arm_points.append(vector(r_car + pos.x, pos.y + (interval * i), pos.z))
         elif condition == 2:
-            for i in range(0, 10):
+            for i in range(0, 30):
                 arm_points.append(vector(r_car + pos.x, pos.y, pos.z + (interval * i)))
         for point in arm_points:
             sensor_arm.append(sphere(pos=point, radius=self.r_sensor, color=color.white))
