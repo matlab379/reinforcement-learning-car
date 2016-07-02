@@ -9,7 +9,7 @@ from vpython import *
 
 class GameState():
     def __init__(self, target):
-        self.scene = display(title='Examples of Tetrahedrons', x=0, y=0, width=600, height=600,                    center=vector(0,0,0), background=vector(1,1,1))
+        self.scene = display(title='Examples of Tetrahedrons', x=0, y=0, width=600, height=600, center=vector(0,0,0), background=vector(1,1,1))
         self.target = target
         Nobstale = 4  # change this to have more or fewer atoms
         # Typical values
@@ -37,7 +37,7 @@ class GameState():
         vert3.append([vector(d,-d,d), vector(d,d,d)])
         vert4.append([vector(d,-d,-d), vector(d,d,-d)])
         #define the car and the obstales
-        self.car = sphere (pos=self.initial_pos, color = color.green, radius = self.r_car, make_trail=True, retain=20)
+        self.car = sphere(pos=self.initial_pos, color = color.green, radius = self.r_car, make_trail=True, retain=20)
         self.target_ball = sphere (pos= self.target, color = color.blue, radius = self.r_car, make_trail=False)
         #self.car.v = vector (-0.02, -0.035, +0.075)
         self.car.v = vector(0, 0, 0)
@@ -149,7 +149,7 @@ class GameState():
             for sensor_arm in self.sensor_arms:
                 for sensor in sensor_arm:
                     sensor.visible = False
-                    sensor.delete()
+                    del sensor
                 del sensor_arm
             self.sensor_arms = [] 
         else:
@@ -194,7 +194,7 @@ class GameState():
             for sensor_arm in self.sensor_arms:
                 for sensor in sensor_arm:
                     sensor.visible = False
-                    sensor.delete()
+                    del sensor
                 del sensor_arm
             self.sensor_arms = []        
             self.collision = False
