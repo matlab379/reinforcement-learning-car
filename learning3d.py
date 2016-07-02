@@ -89,9 +89,9 @@ def train_net(model, params):
             epsilon -= (1/train_frames)
 
         # We died, so update stuff.
-        if reward == -500:
+        if reward == -600:
             car_distance = 0
-        if reward == 2000:
+        if reward == 5000:
             # Log the car's distance at this T.
             data_collect.append([t, car_distance])
 
@@ -152,7 +152,7 @@ def process_minibatch(minibatch, model):
         y = np.zeros((1, 7))
         y[:] = old_qval[:]
         # Check for terminal state.
-        if reward_m != -500:  # non-terminal state
+        if reward_m != -600 and reward_m != 5000:  # non-terminal state
             update = (reward_m + (GAMMA * maxQ))
         else:  # terminal state
             update = reward_m
