@@ -5,3 +5,5 @@ __pycache__
 *.h5
 .idea/
 results/
+.ipynb_checkpoints/
+saved-models/*
